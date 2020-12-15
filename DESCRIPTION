@@ -1,0 +1,14 @@
+Package: STAT302package
+Title: Stat302 Final Project
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Caiwei",
+           family = "Tian",
+           role = c("aut", "cre"),
+           email = "caiwet2@uw.edu")
+Description: This package includes multiple functions for data analysis.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
