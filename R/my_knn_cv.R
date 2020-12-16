@@ -27,14 +27,14 @@ my_knn_cv <- function(train, cl, k_nn, k_cv) {
 
   # Iterate through every fold
   for (i in 1:k_cv) {
-    data_train <- train %>% filter(split != i)
-    data_test <- train %>% filter(split == i)
-    cl_train <- cl %>% filter(split != i)
+    data_train <- train %>% dplyr::filter(split != i)
+    data_test <- train %>% dplyr::filter(split == i)
+    cl_train <- cl %>% dplyr::filter(split != i)
     cl_train <- as.vector(cl_train$cl)
-    cl_test <- cl %>% filter(split == i)
+    cl_test <- cl %>% dplyr::filter(split == i)
     cl_test <- as.vector(cl_test$cl)
 
-    result <- knn(train = data_train, test = data_test, cl = cl_train, k = k_nn)
+    result <- class::knn(train = data_train, test = data_test, cl = cl_train, k = k_nn)
 
     # Compute cv error
     num_err <- 0
@@ -49,6 +49,6 @@ my_knn_cv <- function(train, cl, k_nn, k_cv) {
   cv_error <- cv_error / k_cv
   cl <- as.vector(cl$cl)
 
-  class <- knn(train = train[, 1:4], test = train[, 1:4], cl = cl, k = k_nn)
+  class <- class::knn(train = train[, 1:4], test = train[, 1:4], cl = cl, k = k_nn)
   return(list("class" = class, "cv_error" = cv_error))
 }

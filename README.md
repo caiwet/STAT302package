@@ -3,6 +3,16 @@
   [![Codecov test coverage](https://codecov.io/gh/caiwet/STAT302package/branch/master/graph/badge.svg)](https://codecov.io/gh/caiwet/STAT302package?branch=master)
   <!-- badges: end -->
   
+## Installation
+
+To download the STAT302package, use the code below.
+
+``` r
+# install.packages("devtools")
+devtools::install_github("caiwet/STAT302package")
+library(STAT302package)
+```
+  
 ## Use
 
 The vignette demonstrates example usage of all main functions. Please [file an issue](https://github.com/bryandmartin/corncob/issues) if you have a request for a tutorial that is not currently included. You can see the vignette by using the following code (note that this requires a TeX installation to view properly):

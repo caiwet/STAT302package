@@ -42,21 +42,22 @@ Null hypothesis: life expe
 my_t.test(data, "two.sided", 60)
 ```
 
-The p-value is greater than 0.05, so the probability of observing a result as or more extreme than what we observed, assuming the null hypothesis is true is greater than the p-value cut-off. Thus, we don't have sufficient evidence to reject the null hypothesis.
+The p-value is greater than 0.05, so the probability of observing a result as or more extreme than what we observed, assuming the null hypothesis is true is greater than the p-value cut-off. Thus, we don't have sufficient evidence to reject the null hypothesis that the true mean of life expectancy is equal to 60.
 
 Test 2
 ```{r}
 my_t.test(data, "less", 60)
 ```
 
-This time the p-value is less than 0.05. We can conclude that our results are statistically significant. We are confident to reject null hypothesis and have evidence to support our alternative.
+This time the p-value is less than 0.05. We can conclude that our results are statistically significant. We are confident to reject null hypothesis (life expectancy = 60).
 
 Test 3
 ```{r}
 my_t.test(data, "greater", 60)
 ```
 
-The p-value is much larger than 0.05. We do not have sufficient evidence to reject null hypothesis.
+The p-value is much larger than 0.05. We do not have sufficient evidence to reject null hypothesis (life expectancy = 60
+)
 
 # Tutorial for my_lm
 
@@ -69,6 +70,9 @@ input <- data.frame("lifeExp" = lifeExp, "gdpPercap" = gdpPercap,
 #my_lm(lifeExp ~ gdpPercap + continent, input)
 
 ```
+
+# Tutorial for my_knn_cv
+
 
 
 

@@ -3,5 +3,5 @@ test_that("invalid input", {
 })
 
 test_that("output type is numeric", {
-  expect_type(my_rf_cv(5), "numeric")
+  expect_type(my_rf_cv(5), "double")
 })

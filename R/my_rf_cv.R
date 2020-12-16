@@ -21,9 +21,9 @@ my_rf_cv <- function(k) {
 
   est <- rep(NA, n)
   for (i in 1:k) {
-    data_train <- penguins %>% filter(split != i)
-    data_test <- penguins %>% filter(split == i)
-    model <- randomForest(body_mass_g ~ bill_length_mm + bill_depth_mm +
+    data_train <- penguins %>% dplyr::filter(split != i)
+    data_test <- penguins %>% dplyr::filter(split == i)
+    model <- randomForest::randomForest(body_mass_g ~ bill_length_mm + bill_depth_mm +
                             flipper_length_mm, data = data_train,
                           ntree = 100)
     est[fold == i] = predict(model, data_test[, -1])
