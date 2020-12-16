@@ -8,6 +8,7 @@ Authors@R:
            email = "caiwet2@uw.edu")
 Description: This package includes multiple functions for data analysis.
 License: GPL (>= 3)
+Imports: tibble, stats, dplyr, magrittr, randomForest, class
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

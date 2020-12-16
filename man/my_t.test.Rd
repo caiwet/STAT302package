@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_t.test.R
 \name{my_t.test}
 \alias{my_t.test}
-\title{T test Function}
+\title{T-test Function}
 \usage{
 my_t.test(x, alternative, mu)
 }
@@ -24,10 +24,8 @@ and the numeric p-value \code{"p_val"}.
 This function performs one-sample t test for both two-sided or one-sided.
 }
 \examples{
-\dontrun{
 x <- rnorm(10, mean = 0.1, sd = 1)
 my_t.test(x, "two.sided", 0)
 my_t.test(x, "greater", 0)
 }
-}
-\keyword{t-test}
+\keyword{inference}

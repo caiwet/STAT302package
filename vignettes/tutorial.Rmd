@@ -15,6 +15,78 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+# Introduction
+This package is primarily used for data analysis. It includes four functions to enable computation of t-test, linear model fitting, k nearest neighbor cross-validation and random forest cross-validation.
+
+Use the following command to install the package \texttt{STAT302package}.
+
+```{r,eval=FALSE}
+devtools::install_github("caiwet/STAT302package")
+```
+
+To begin, load our package first.
 ```{r setup}
 library(STAT302package)
 ```
+
+# Tutorial for my_t.test
+Use \texttt{lifeExp} data from \texttt{my_gapminder}
+```{r}
+data <- my_gapminder$lifeExp
+```
+
+Test 1
+Null hypothesis: life expe
+```{r}
+my_t.test(data, "two.sided", 60)
+```
+
+The p-value is greater than 0.05, so the probability of observing a result as or more extreme than what we observed, assuming the null hypothesis is true is greater than the p-value cut-off. Thus, we don't have sufficient evidence to reject the null hypothesis.
+
+Test 2
+```{r}
+my_t.test(data, "less", 60)
+```
+
+This time the p-value is less than 0.05. We can conclude that our results are statistically significant. We are confident to reject null hypothesis and have evidence to support our alternative.
+
+Test 3
+```{r}
+my_t.test(data, "greater", 60)
+```
+
+The p-value is much larger than 0.05. We do not have sufficient evidence to reject null hypothesis.
+
+# Tutorial for my_lm
+
+```{r}
+lifeExp <- my_gapminder$lifeExp
+gdpPercap <- my_gapminder$gdpPercap
+continent <- my_gapminder$continent
+input <- data.frame("lifeExp" = lifeExp, "gdpPercap" = gdpPercap, 
+                    "continent" = continent)
+#my_lm(lifeExp ~ gdpPercap + continent, input)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
