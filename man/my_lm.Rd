@@ -14,8 +14,8 @@ the model to be fitted).}
 }
 \value{
 a \code{"table"} with rows for each coefficient and columns for the
-\code{"Estimate"}, \code{"Std.Error"}, \code{"t value"},
-and \code{"Pr(>|t|)"}.
+\code{"Estimate"}, \code{"Std.Error"}, \code{"t_value"},
+and \code{"Pr"}.
 }
 \description{
 This function fits a linear model for input data.

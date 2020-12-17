@@ -56,8 +56,7 @@ Test 3
 my_t.test(data, "greater", 60)
 ```
 
-The p-value is much larger than 0.05. We do not have sufficient evidence to reject null hypothesis (life expectancy = 60
-)
+The p-value is much larger than 0.05. We do not have sufficient evidence to reject null hypothesis (life expectancy = 60).
 
 # Tutorial for my_lm
 
@@ -67,11 +66,111 @@ gdpPercap <- my_gapminder$gdpPercap
 continent <- my_gapminder$continent
 input <- data.frame("lifeExp" = lifeExp, "gdpPercap" = gdpPercap, 
                     "continent" = continent)
-#my_lm(lifeExp ~ gdpPercap + continent, input)
+output <- my_lm(lifeExp ~ gdpPercap + continent, input)
+print(output)
 
+my_coef <- output$Estimate
+my_matrix <- model.matrix(lifeExp ~ gdpPercap + continent, data = my_gapminder)
+y_hat <- my_matrix %>% as.matrix(my_coef)
+my_df <- data.frame(actual = my_gapminder$lifeExp, fitted = y_hat, continent = my_gapminder$continent)
+
+x <- my_gapminder$gdpPercap
+y <- my_df$fitted.continentAmericas
+ggplot(my_df, aes(x = x, y = y)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, col = "red", lty = 2) +
+  theme_bw(base_size = 15) +
+  labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted")+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 # Tutorial for my_knn_cv
+
+```{r}
+penguins_df <- na.omit(my_penguins)
+penguins_cl <- penguins_df$species
+penguins_df <- penguins_df %>%
+  dplyr::select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g)
+
+k_nn <- (1:10)
+training_miss <- c()
+cv_miss <- c()
+for (i in 1:10) {
+  predict <- my_knn_cv(penguins_df, penguins_cl, k_nn[i], 5)
+  cv_miss <- c(cv_miss, predict$cv_error)
+  pred <- predict$class
+  err <- 0
+  for (i in 1:length(penguins_cl)) {
+    if (penguins_cl[i] != pred[i]) {
+      err <- err + 1
+    }
+  }
+  err <- err / length(penguins_cl)
+  training_miss <- c(training_miss, err)
+}
+print(training_miss)
+print(cv_miss)
+```
+
+I would choose k_nn = 1 model based on training misclassification rate and would choose k_nn = 2 model based on CV misclassification rate. In practice I will choose the one that minimizes the CV misclassification rate because apparently, if we only choose 1 neighbor, the prediction is just the data itself. Although it has high training accuracy, it doesn't generalize well. Yet the model that has the least CV misclassification has a pretty good training accuracy as well as good generalization. The reason behind this is that, for each fold of the data, we train a model based on all other folds except one left for testing. Once we got the misclassification rate of the test set for this model, do the same thing for all the folds one by one. Compute the average misclassification rate of these models and report that. This rate is more like a test rate rather than training rate, so it indicates both the accuracy and the generalization ability of the model.
+
+# Tutorial for my_rf_cv
+
+```{r}
+# Generate a data frame containing k values and corresponding mse 
+# in 30 iterations
+k_list <- c(2, 5, 10)
+itr <- 30
+df_total <- data.frame()
+mean_cv <- c()
+sd_cv <- c()
+
+for (k in k_list) {
+  mse_list <- c()
+  for (i in 1:itr) {
+    mse <- my_rf_cv(k)
+    df_curr <- data.frame("k" = k, "mse" = mse)
+    df_total <- rbind(df_total, df_curr)
+    mse_list <- c(mse_list, mse)
+  }
+  mean_cv <- c(mean_cv, mean(mse_list))
+  sd_cv <- c(sd_cv, sd(mse_list))
+}
+
+result <- matrix(c(mean_cv, sd_cv), nrow = 3, ncol = 2, byrow = FALSE)
+rownames(result) <- c("k = 2", "k = 5", "k = 10")
+colnames(result) <- c("mean_cv", "sd_cv")
+as.table(result)
+
+result <- data.frame("mean_cv" = mean_cv, "sd_cv" = sd_cv)
+kable(result, format = "markdown")
+```
+```{r}
+library(knitr)
+result <- data.frame("mean_cv" = mean_cv, "sd_cv" = sd_cv)
+row.names(result) <- c("k = 2", "k = 5", "k = 10")
+kable(result, format = "markdown")
+```
+
+
+```{r}
+library(ggplot2)
+# Generate a boxplot
+df_total %>% 
+  ggplot(aes(x = k, y = mse, group = k)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "CV estimated MSE for different k",
+       x = "k",
+       y = "CV estimated MSE") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.caption = element_text(hjust = 0, face = "italic"))
+  
+```
+From the boxplot we can see that for smaller k, the MSE is generally larger. The means from the table also proves our observation. I think this is because, when k is larger, the number of data in the training set is larger. The more data we have for training purpose, the more accurate the model will be, which leads to lower MSE. The standard deviation also decreases as k gets larger, I think it is due to the same reason. When our model is accurate, it has better performance overall. When the model is not that accurate, on the other hand, the prediction somehow depends on luck so the result varies a lot.
+
+
+
+
 
 
 

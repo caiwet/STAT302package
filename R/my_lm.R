@@ -7,8 +7,8 @@
 #' @param data input data frame.
 #' @keywords inference prediction
 #' @return a \code{"table"} with rows for each coefficient and columns for the
-#'   \code{"Estimate"}, \code{"Std.Error"}, \code{"t value"},
-#'   and \code{"Pr(>|t|)"}.
+#'   \code{"Estimate"}, \code{"Std.Error"}, \code{"t_value"},
+#'   and \code{"Pr"}.
 #' @examples
 #' # Create a random input for test
 #' value1 <- c(182, 193, 183, 194, 189, 183)
@@ -22,7 +22,6 @@ my_lm <- function(formula, data) {
   frame <- model.frame(formula, data)
   Y <- model.response(frame)
   est <- solve(t(X) %*% X) %*% t(X) %*% Y
-  print(est)
   df <- nrow(data) - ncol(data)
   n <- nrow(X)
   sigma_sq <- 0
@@ -37,10 +36,7 @@ my_lm <- function(formula, data) {
   t_value <- est / se
 
   Pr <- pt(abs(t_value), df, lower.tail = FALSE) * 2
-  #row_names <- rownames(est)
-  result <- matrix(c(est, se, t_value, Pr), nrow = 3, byrow = FALSE)
-  #rownames(result) <- row_names
-  colnames(result) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
-  result <- as.table(result)
-  return(result)
+  df <- data.frame("Estimate" = est, "Std.Error" = se,
+                   "t_value" = t_value, "Pr" = Pr)
+  return(df)
 }
