@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 
 
 # Introduction
-This package is primarily used for data analysis. It includes four functions to enable computation of t-test, linear model fitting, k nearest neighbor cross-validation and random forest cross-validation.
+This package is primarily used for data analysis. It includes four functions that enable computation of t-test, linear model fitting, k nearest neighbor cross-validation and random forest cross-validation.
 
-Use the following command to install the package \texttt{STAT302package}.
+Use the following command to install the STAT302package.
 
 ```{r,eval=FALSE}
 devtools::install_github("caiwet/STAT302package")
@@ -33,13 +33,12 @@ library(knitr)
 ```
 
 # Tutorial for my_t.test
-Use \texttt{lifeExp} data from \texttt{my_gapminder}
+Use lifeExp data from my_gapminder.
 ```{r}
 data <- my_gapminder$lifeExp
 ```
 
 Test 1
-Null hypothesis: life expe
 ```{r}
 my_t.test(data, "two.sided", 60)
 ```
@@ -74,12 +73,15 @@ output <- my_lm(lifeExp ~ gdpPercap + continent, input)
 print(output)
 ```
 
-Here we see that the coefficient for gdpPercap is about 4.789. That is to say, if gdpPercap increases by one unit, the mean life expectancy will increase by 4.789. The hypothesis test associated with the gdpPercap coefficient: 
-null hypothesis: gdpPercap coefficient = 0 (there's no relationship between gdpPercap and lifeExp)
-alternative hypothesis: gdpPercap coefficient is not equal to 0 (two sided test)
-The p_value we got for this hypothesis test also can be read from the table above. It is very very small and definitely less than $alpha$ = 0.05. Thus, we have sufficient evidence to support that the null hypothesis is true and there is a relationship between gdpPercap and lifeExp.
+Here we see that the coefficient for gdpPercap is about 4.789. That is to say, if gdpPercap increases by one unit, the mean life expectancy will increase by 4.789. 
 
-```{r}
+The hypothesis test associated with the gdpPercap coefficient: 
+null hypothesis is gdpPercap coefficient = 0 (there's no relationship between gdpPercap and lifeExp) and
+alternative hypothesis is gdpPercap coefficient is not equal to 0 (two sided test).
+
+The p_value we got for this hypothesis test also can be read from the table above. It is very very small and definitely less than alpha = 0.05. Thus, we have sufficient evidence to support that the null hypothesis is true and there is a relationship between gdpPercap and lifeExp.
+
+```{r,fig.width=6}
 # plot the actual vs. fitted values
 my_coef <- output$Estimate
 my_matrix <- model.matrix(lifeExp ~ gdpPercap + continent, data = my_gapminder)
@@ -90,13 +92,13 @@ my_df <- data.frame(actual = my_gapminder$lifeExp, fitted = y_hat,
 
 ggplot(my_df, aes(x = lifeExp, y = fitted)) +
   geom_point(aes(colour = factor(continent))) +
-  geom_abline(slope = 1, intercept = 0, col = "red", lty = 2) +
+  geom_abline(slope = 1, intercept = 0, col = "black", lty = 2) +
   theme_bw(base_size = 15) +
   labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-If the model fits well, we would see all points near the line. In our model, we can see some points fitted well in the Europe continent set and when fitted values are high (60 - 80). However, in general, we generate many different predictions for different data points even though their actual values are very similar. There are also points in the continent = Asia set being very far away from the line. I think this indicates that our independent variable is not enough. We missed information when predicting. 
+If the model fits well, we would see all points around the line. In our model, we can see some points fitted well in the Europe continent set and when fitted values are high (60 - 80). However, in general, we generate many different predictions for different data points even though their actual values are very similar. There are also points in the continent = Asia set being very far away from the line. I think this indicates that our independent variable is not enough. We missed information when predicting. 
 
 
 # Tutorial for my_knn_cv
@@ -126,6 +128,7 @@ for (i in 1:10) {
 print(training_miss)
 print(cv_miss)
 ```
+
 
 I would choose k_nn = 1 model based on training misclassification rate and would choose k_nn = 2 model based on CV misclassification rate. In practice I will choose the one that minimizes the CV misclassification rate because apparently, if we only choose 1 neighbor, the prediction is just the data itself. Although it has high training accuracy, it doesn't generalize well. Yet the model that has the least CV misclassification has a pretty good training accuracy as well as good generalization. The reason behind this is that, for each fold of the data, we train a model based on all other folds except one left for testing. Once we got the misclassification rate of the test set for this model, do the same thing for all the folds one by one. Compute the average misclassification rate of these models and report that. This rate is more like a test rate rather than training rate, so it indicates both the accuracy and the generalization ability of the model.
 
@@ -163,7 +166,7 @@ kable(result, format = "markdown")
 ```
 
 
-```{r}
+```{r, fig.width=6}
 # Generate a boxplot
 df_total %>% 
   ggplot(aes(x = k, y = mse, group = k)) +
@@ -175,6 +178,7 @@ df_total %>%
         plot.caption = element_text(hjust = 0, face = "italic"))
   
 ```
+
 From the boxplot we can see that for smaller k, the MSE is generally larger. The means from the table also proves our observation. I think this is because, when k is larger, the number of data in the training set is larger. The more data we have for training purpose, the more accurate the model will be, which leads to lower MSE. The standard deviation also decreases as k gets larger, I think it is due to the same reason. When our model is accurate, it has better performance overall. When the model is not that accurate, on the other hand, the prediction somehow depends on luck so the result varies a lot.
 
 
