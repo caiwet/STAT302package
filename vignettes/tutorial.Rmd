@@ -28,6 +28,8 @@ devtools::install_github("caiwet/STAT302package")
 To begin, load our package first.
 ```{r setup}
 library(STAT302package)
+library(ggplot2)
+library(knitr)
 ```
 
 # Tutorial for my_t.test
@@ -61,6 +63,8 @@ The p-value is much larger than 0.05. We do not have sufficient evidence to reje
 # Tutorial for my_lm
 
 ```{r}
+# Fit a linear model using lifeExp as response variable and gdpPercap and 
+# continent as explanatory variables
 lifeExp <- my_gapminder$lifeExp
 gdpPercap <- my_gapminder$gdpPercap
 continent <- my_gapminder$continent
@@ -68,21 +72,32 @@ input <- data.frame("lifeExp" = lifeExp, "gdpPercap" = gdpPercap,
                     "continent" = continent)
 output <- my_lm(lifeExp ~ gdpPercap + continent, input)
 print(output)
+```
 
+Here we see that the coefficient for gdpPercap is about 4.789. That is to say, if gdpPercap increases by one unit, the mean life expectancy will increase by 4.789. The hypothesis test associated with the gdpPercap coefficient: 
+null hypothesis: gdpPercap coefficient = 0 (there's no relationship between gdpPercap and lifeExp)
+alternative hypothesis: gdpPercap coefficient is not equal to 0 (two sided test)
+The p_value we got for this hypothesis test also can be read from the table above. It is very very small and definitely less than $alpha$ = 0.05. Thus, we have sufficient evidence to support that the null hypothesis is true and there is a relationship between gdpPercap and lifeExp.
+
+```{r}
+# plot the actual vs. fitted values
 my_coef <- output$Estimate
 my_matrix <- model.matrix(lifeExp ~ gdpPercap + continent, data = my_gapminder)
-y_hat <- my_matrix %>% as.matrix(my_coef)
-my_df <- data.frame(actual = my_gapminder$lifeExp, fitted = y_hat, continent = my_gapminder$continent)
 
-x <- my_gapminder$gdpPercap
-y <- my_df$fitted.continentAmericas
-ggplot(my_df, aes(x = x, y = y)) +
-  geom_point() +
+y_hat <- my_matrix %*% as.matrix(my_coef)
+my_df <- data.frame(actual = my_gapminder$lifeExp, fitted = y_hat, 
+                    continent = my_gapminder$continent)
+
+ggplot(my_df, aes(x = lifeExp, y = fitted)) +
+  geom_point(aes(colour = factor(continent))) +
   geom_abline(slope = 1, intercept = 0, col = "red", lty = 2) +
   theme_bw(base_size = 15) +
-  labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted")+
+  labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
+If the model fits well, we would see all points near the line. In our model, we can see some points fitted well in the Europe continent set and when fitted values are high (60 - 80). However, in general, we generate many different predictions for different data points even though their actual values are very similar. There are also points in the continent = Asia set being very far away from the line. I think this indicates that our independent variable is not enough. We missed information when predicting. 
+
 
 # Tutorial for my_knn_cv
 
@@ -143,18 +158,12 @@ colnames(result) <- c("mean_cv", "sd_cv")
 as.table(result)
 
 result <- data.frame("mean_cv" = mean_cv, "sd_cv" = sd_cv)
-kable(result, format = "markdown")
-```
-```{r}
-library(knitr)
-result <- data.frame("mean_cv" = mean_cv, "sd_cv" = sd_cv)
 row.names(result) <- c("k = 2", "k = 5", "k = 10")
 kable(result, format = "markdown")
 ```
 
 
 ```{r}
-library(ggplot2)
 # Generate a boxplot
 df_total %>% 
   ggplot(aes(x = k, y = mse, group = k)) +
